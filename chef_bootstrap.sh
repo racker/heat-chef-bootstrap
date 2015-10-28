@@ -1,5 +1,6 @@
 #!/bin/bash
 LOGFILE="/var/log/cloud-init-chef-bootstrap.setup.$$"
+CHEFRUNLOGFILE="/var/log/cloud-init-chef-bootstrap.first-run.$$"
 # Initial timestamp and debug information
 date > $LOGFILE
 echo "Starting cloud-init bootstrap" >> $LOGFILE
@@ -58,7 +59,7 @@ EOF
 if [ ! -f /usr/bin/chef-client ]; then
   echo "Installing chef using omnibus installer" >> $LOGFILE
   # adjust to install the latest vs. a particular version
-  curl -L https://www.opscode.com/chef/install.sh | bash -s -- -v %chef_version% &>$LOGFILE
+  curl -L https://www.opscode.com/chef/install.sh | bash -s -- -v %chef_version% -- &>$LOGFILE
   echo "Installation of chef complete" >> $LOGFILE
 else
   echo "Existing chef found and is being used" >> $LOGFILE
@@ -68,7 +69,7 @@ fi
 echo "Executing the first chef-client run"
 if [ -f /usr/bin/chef-client ]; then
   echo "First Chef client run" >> $LOGFILE
-  /usr/bin/chef-client -j /etc/chef/first-boot.json
+  /usr/bin/chef-client -j /etc/chef/first-boot.json >> $CHEFRUNLOGFILE
 fi
 # Script complete. Log final timestamp
 date >> $LOGFILE
