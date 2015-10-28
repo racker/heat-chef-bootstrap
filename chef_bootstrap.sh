@@ -23,11 +23,11 @@ fi
 echo "Storing validation key in /etc/chef/validator.pem"
 mkdir /etc/chef /var/log/chef &>/dev/null
 cat >/etc/chef/validator.pem <<EOF
-%validation_key%
+%chef_validation_key%
 EOF
 
 # Store the encrypted_data_bag_secret if provided
-if [ -n '%chef_encrypted_secret_key%' ]; then
+if [ -n %chef_encrypted_secret_key% ]; then
   echo "Storing data bag secret in /etc/chef/encrypted_data_bag_secret"
   cat >/etc/chef/encrypted_data_bag_secret <<EOF
 %chef_encrypted_secret_key%
@@ -52,7 +52,7 @@ touch /etc/chef/first-boot.json
 cat >/etc/chef/first-boot.json <<EOF
 {"run_list":["%chef_run_list%"]
 EOF
-if [ -n '%chef_attributes%' ]; then
+if [ -n %chef_attributes% ]; then
   cat >>/etc/chef/first-boot.json <<EOF
 ,
 %chef_attributes%
@@ -66,7 +66,7 @@ EOF
 if [ ! -f /usr/bin/chef-client ]; then
   echo "Installing chef using omnibus installer" >> $LOGFILE
   # adjust to install the latest vs. a particular version
-  curl -L https://www.opscode.com/chef/install.sh | bash -s -- -v %chef_version% -- &>$LOGFILE
+  curl -L https://www.opscode.com/chef/install.sh | bash -s -- -v %chef_version% -- &>>$LOGFILE
   echo "Installation of chef complete" >> $LOGFILE
 else
   echo "Existing chef found and is being used" >> $LOGFILE
