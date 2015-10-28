@@ -49,10 +49,8 @@ EOF
 # Cook the first boot file
 echo "Creating a minimal /etc/chef/first-boot.json" >> $LOGFILE
 touch /etc/chef/first-boot.json
-cat >/etc/chef/first-boot.json <<EOF
-{"run_list":["%chef_run_list%"]
-EOF
-if [ -n %chef_attributes% ]; then
+printf "{\n  \"run_list\":[\"%chef_run_list%\"]" > /etc/chef/first-boot.json
+if [ -n '%chef_attributes%' ]; then
   cat >>/etc/chef/first-boot.json <<EOF
 ,
 %chef_attributes%
