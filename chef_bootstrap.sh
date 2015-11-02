@@ -61,9 +61,7 @@ if [ -n '%chef_attributes%' ]; then
 fi
 
 # Close JSON of file
-cat >>/etc/chef/first-boot.json <<EOF
-}
-EOF
+printf '\n}' >> /etc/chef/first-boot.json
 
 # Install chef-client through omnibus (if not already available)
 if [ ! -f /usr/bin/chef-client ]; then
