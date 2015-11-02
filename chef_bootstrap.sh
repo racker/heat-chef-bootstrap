@@ -50,21 +50,24 @@ EOF
 echo "Creating a minimal /etc/chef/first-boot.json" >> $LOGFILE
 touch /etc/chef/first-boot.json
 printf "{\n  \"run_list\":[\"%chef_run_list%\"]" > /etc/chef/first-boot.json
+
 if [ -n '%chef_attributes%' ]; then
-  cat >>/etc/chef/first-boot.json <<EOF
-,
-%chef_attributes%
-EOF
+  # Replace helper values
+  public_ip=$(/sbin/ip -4 -o addr show dev eth0| awk '{split($4,a,"/");print a[1]}')
+  private_ip=$(/sbin/ip -4 -o addr show dev eth1| awk '{split($4,a,"/");print a[1]}')
+  chef_attributes=$(printf '%chef_attributes%' | sed "s/##public_ip##/$public_ip/g")
+  chef_attributes=$(printf '%chef_attributes%' | sed "s/##private_ip##/$private_ip/g")
+  printf ",\n$chef_attributes" >> /etc/chef/first-boot.json
 fi
-cat >>/etc/chef/first-boot.json <<EOF
-}
-EOF
+
+# Close JSON of file
+printf '\n}' >> /etc/chef/first-boot.json
 
 # Install chef-client through omnibus (if not already available)
 if [ ! -f /usr/bin/chef-client ]; then
   echo "Installing chef using omnibus installer" >> $LOGFILE
   # adjust to install the latest vs. a particular version
-  curl -L https://www.opscode.com/chef/install.sh | bash -s -- -v %chef_version% -- &>>$LOGFILE
+  curl -L https://www.opscode.com/chef/install.sh | bash -s -- -v %chef_version% >>$LOGFILE
   echo "Installation of chef complete" >> $LOGFILE
 else
   echo "Existing chef found and is being used" >> $LOGFILE
