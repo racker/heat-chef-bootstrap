@@ -79,10 +79,12 @@ echo "Executing the first chef-client run"
 if [ -f /usr/bin/chef-client ]; then
   echo "First Chef client run" >> $LOGFILE
   /usr/bin/chef-client -j /etc/chef/first-boot.json >> $CHEFRUNLOGFILE
+  if [ $? -eq 0 ]; then
+    wc_notify --data-binary '{"status": "SUCCESS"}'
+  else
+    wc_notify --data-binary '{"status": "FAILURE"}'
+  fi
 fi
 
 # Script complete. Log final timestamp
 date >> $LOGFILE
-
-# Heat wait condition
-wc_notify --data-binary '{"status": "SUCCESS"}'
