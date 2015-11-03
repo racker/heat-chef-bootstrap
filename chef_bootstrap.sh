@@ -22,33 +22,26 @@ fi
 # Store the validation key in /etc/chef/validator.pem
 echo "Storing validation key in /etc/chef/validator.pem"
 mkdir /etc/chef /var/log/chef &>/dev/null
-cat >/etc/chef/validator.pem <<EOF
-%chef_validation_key%
-EOF
+printf '%chef_validation_key%' >/etc/chef/validator.pem
 
 # Store the encrypted_data_bag_secret if provided
 if [ -n %chef_encrypted_secret_key% ]; then
   echo "Storing data bag secret in /etc/chef/encrypted_data_bag_secret"
-  cat >/etc/chef/encrypted_data_bag_secret <<EOF
-%chef_encrypted_secret_key%
-EOF
+  printf '%chef_encrypted_secret_key%' >/etc/chef/encrypted_data_bag_secret
 fi
 
 # Cook a minimal client.rb for getting the chef-client registered
 echo "Creating a minimal /etc/chef/client.rb" >> $LOGFILE
-touch /etc/chef/client.rb
-cat >/etc/chef/client.rb <<EOF
+printf '\
   log_level        :info
   log_location     STDOUT
   chef_server_url  "$CHEFSERVERURL"
   validation_key         "/etc/chef/validator.pem"
   validation_client_name "%chef_organization%-validator"
-  environment      "%chef_environment%"
-EOF
+  environment      "%chef_environment%"' > /etc/chef/client.rb
 
 # Cook the first boot file
 echo "Creating a minimal /etc/chef/first-boot.json" >> $LOGFILE
-touch /etc/chef/first-boot.json
 printf "{\n  \"run_list\":[\"%chef_run_list%\"]" > /etc/chef/first-boot.json
 
 if [ -n '%chef_attributes%' ]; then
