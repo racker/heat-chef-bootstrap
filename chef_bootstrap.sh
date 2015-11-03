@@ -10,13 +10,11 @@ echo "organization parameter: $chef_organization" >> $LOGFILE
 echo "run list parameter: $chef_run_list" >> $LOGFILE
 
 # Infer the Chef Server's URL if none was passed
-CHEFSERVERURL='$chef_server_url'
-if [ -n $CHEFSERVERURL ]; then
+if [ -n "$chef_server_url" ]; then
   echo "chef_server_url parameter: not passed" >> $LOGFILE
-  CHEFSERVERURL="https://api.opscode.com/organizations/$chef_organization"
+  chef_server_url="https://api.opscode.com/organizations/$chef_organization"
 else
-  echo "chef_server_url parameter: $CHEFSERVERURL" >> $LOGFILE
-  CHEFSERVERURL="$chef_server_url"
+  echo "chef_server_url parameter: $chef_server_url" >> $LOGFILE
 fi
 
 # Store the validation key in /etc/chef/validator.pem
@@ -32,14 +30,13 @@ fi
 
 # Cook a minimal client.rb for getting the chef-client registered
 echo "Creating a minimal /etc/chef/client.rb" >> $LOGFILE
-printf '
-  log_level        :info
-  log_location     STDOUT
-  chef_server_url  "$CHEFSERVERURL"
-  validation_key         "/etc/chef/validator.pem"
-  validation_client_name "$chef_organization-validator"
-  environment      "$chef_environment"
-' > /etc/chef/client.rb
+printf '%s\n' \
+"log_level        :info
+log_location     STDOUT
+chef_server_url  \"$chef_server_url\"
+validation_key         \"/etc/chef/validator.pem\"
+validation_client_name \"$chef_organization-validator\"
+environment      \"$chef_environment\"" > /etc/chef/client.rb
 
 # Cook the first boot file
 echo "Creating a minimal /etc/chef/first-boot.json" >> $LOGFILE
