@@ -25,7 +25,7 @@ mkdir /etc/chef /var/log/chef &>/dev/null
 printf '$chef_validation_key' >/etc/chef/validator.pem
 
 # Store the encrypted_data_bag_secret if provided
-if [ -n $chef_encrypted_secret_key ]; then
+if [ -n "$chef_encrypted_secret_key" ]; then
   echo "Storing data bag secret in /etc/chef/encrypted_data_bag_secret"
   printf "$chef_encrypted_secret_key" >/etc/chef/encrypted_data_bag_secret
 fi
@@ -45,7 +45,7 @@ printf '
 echo "Creating a minimal /etc/chef/first-boot.json" >> $LOGFILE
 printf "{\n  \"run_list\":[\"$chef_run_list\"]" > /etc/chef/first-boot.json
 
-if [ -n $chef_attributes ]; then
+if [ -n "$chef_attributes" ]; then
   # Replace helper values
   public_ip=$(/sbin/ip -4 -o addr show dev eth0| awk '{split($4,a,"/");print a[1]}')
   private_ip=$(/sbin/ip -4 -o addr show dev eth1| awk '{split($4,a,"/");print a[1]}')
