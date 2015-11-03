@@ -10,11 +10,11 @@ echo "organization parameter: $chef_organization" >> $LOGFILE
 echo "run list parameter: $chef_run_list" >> $LOGFILE
 
 # Infer the Chef Server's URL if none was passed
-if [ -n "$chef_server_url" ]; then
+if [ "$chef_server_url" ]; then
+  echo "chef_server_url parameter: $chef_server_url" >> $LOGFILE
+else
   echo "chef_server_url parameter: not passed" >> $LOGFILE
   chef_server_url="https://api.opscode.com/organizations/$chef_organization"
-else
-  echo "chef_server_url parameter: $chef_server_url" >> $LOGFILE
 fi
 
 # Store the validation key in /etc/chef/validator.pem
