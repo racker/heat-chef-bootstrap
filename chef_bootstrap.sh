@@ -12,9 +12,10 @@ echo "run list parameter: $chef_run_list" >> $LOGFILE
 # Infer the Chef Server's URL if none was passed
 if [ "$chef_server_url" ]; then
   echo "chef_server_url parameter: $chef_server_url" >> $LOGFILE
+  chef_url="$chef_server_url"
 else
   echo "chef_server_url parameter: not passed" >> $LOGFILE
-  chef_server_url="https://api.opscode.com/organizations/$chef_organization"
+  chef_url="https://api.opscode.com/organizations/$chef_organization"
 fi
 
 # Store the validation key in /etc/chef/validator.pem
@@ -33,14 +34,14 @@ echo "Creating a minimal /etc/chef/client.rb" >> $LOGFILE
 printf '%s\n' \
 "log_level        :info
 log_location     STDOUT
-chef_server_url  \"$chef_server_url\"
+chef_server_url  \"$chef_url\"
 validation_key         \"/etc/chef/validator.pem\"
 validation_client_name \"$chef_organization-validator\"
 environment      \"$chef_environment\"" > /etc/chef/client.rb
 
 # Cook the first boot file
 echo "Creating a minimal /etc/chef/first-boot.json" >> $LOGFILE
-printf "{\n  \"run_list\":[\"$chef_run_list\"]" > /etc/chef/first-boot.json
+printf "{\n  \"run_list\":$chef_run_list" > /etc/chef/first-boot.json
 
 if [ -n "$chef_attributes" ]; then
   # Replace helper values
