@@ -27,7 +27,7 @@ printf '$chef_validation_key' >/etc/chef/validator.pem
 # Store the encrypted_data_bag_secret if provided
 if [ -n $chef_encrypted_secret_key ]; then
   echo "Storing data bag secret in /etc/chef/encrypted_data_bag_secret"
-  printf '$chef_encrypted_secret_key' >/etc/chef/encrypted_data_bag_secret
+  printf "$chef_encrypted_secret_key" >/etc/chef/encrypted_data_bag_secret
 fi
 
 # Cook a minimal client.rb for getting the chef-client registered
@@ -45,12 +45,12 @@ printf '
 echo "Creating a minimal /etc/chef/first-boot.json" >> $LOGFILE
 printf "{\n  \"run_list\":[\"$chef_run_list\"]" > /etc/chef/first-boot.json
 
-if [ -n '$chef_attributes' ]; then
+if [ -n $chef_attributes ]; then
   # Replace helper values
   public_ip=$(/sbin/ip -4 -o addr show dev eth0| awk '{split($4,a,"/");print a[1]}')
   private_ip=$(/sbin/ip -4 -o addr show dev eth1| awk '{split($4,a,"/");print a[1]}')
-  chef_attributes=$(printf '$chef_attributes' | sed "s/##public_ip##/$public_ip/g")
-  chef_attributes=$(printf '$chef_attributes' | sed "s/##private_ip##/$private_ip/g")
+  chef_attributes=$(printf "$chef_attributes" | sed "s/##public_ip##/$public_ip/g")
+  chef_attributes=$(printf "$chef_attributes" | sed "s/##private_ip##/$private_ip/g")
   printf ",\n$chef_attributes" >> /etc/chef/first-boot.json
 fi
 
