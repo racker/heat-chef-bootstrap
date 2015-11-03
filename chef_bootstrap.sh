@@ -22,12 +22,12 @@ fi
 # Store the validation key in /etc/chef/validator.pem
 echo "Storing validation key in /etc/chef/validator.pem"
 mkdir /etc/chef /var/log/chef &>/dev/null
-printf '$chef_validation_key' >/etc/chef/validator.pem
+printf '%b\n' "$chef_validation_key" > /etc/chef/validator.pem
 
 # Store the encrypted_data_bag_secret if provided
 if [ -n "$chef_encrypted_secret_key" ]; then
   echo "Storing data bag secret in /etc/chef/encrypted_data_bag_secret"
-  printf "$chef_encrypted_secret_key" >/etc/chef/encrypted_data_bag_secret
+  printf '%b\n' "$chef_encrypted_secret_key" >/etc/chef/encrypted_data_bag_secret
 fi
 
 # Cook a minimal client.rb for getting the chef-client registered
