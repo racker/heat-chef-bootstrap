@@ -41,7 +41,7 @@ environment      \"$chef_environment\"" > /etc/chef/client.rb
 
 # Cook the first boot file
 echo "Creating a minimal /etc/chef/first-boot.json" >> $LOGFILE
-printf "{\n  \"run_list\":$chef_run_list" > /etc/chef/first-boot.json
+printf '%b\n' '{\n  "run_list":$chef_run_list' > /etc/chef/first-boot.json
 
 if [ -n "$chef_attributes" ]; then
   # Replace helper values
