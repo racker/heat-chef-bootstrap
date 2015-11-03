@@ -41,7 +41,7 @@ environment      \"$chef_environment\"" > /etc/chef/client.rb
 
 # Cook the first boot file
 echo "Creating a minimal /etc/chef/first-boot.json" >> $LOGFILE
-printf '%b\n' '{\n  "run_list":$chef_run_list' > /etc/chef/first-boot.json
+printf '{\n  "run_list":$chef_run_list' > /etc/chef/first-boot.json
 
 if [ -n "$chef_attributes" ]; then
   # Replace helper values
@@ -49,7 +49,7 @@ if [ -n "$chef_attributes" ]; then
   private_ip=$(/sbin/ip -4 -o addr show dev eth1| awk '{split($4,a,"/");print a[1]}')
   chef_attributes=$(printf "$chef_attributes" | sed "s/##public_ip##/$public_ip/g")
   chef_attributes=$(printf "$chef_attributes" | sed "s/##private_ip##/$private_ip/g")
-  printf ",\n$chef_attributes" >> /etc/chef/first-boot.json
+  printf ',\n$chef_attributes' >> /etc/chef/first-boot.json
 fi
 
 # Close JSON of file
