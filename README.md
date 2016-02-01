@@ -54,7 +54,8 @@ chef_run_list             | Run list of chef recipes or roles to bootstrap appli
 chef_attributes           | Attributes, in JSON form, to set for chef-client first boot. Optional, Default: `nil`
 chef_validation_key       | Chef organization validation key. Required: Format as single line with literal newlines (\n)
 chef_encrypted_secret_key | A encrypted_data_bag_secret to pass to the server. Optional, Default: `nil`
-wc_notify                 | Heat wait condition notification. Optional, Default : `{"status": "SUCCESS"'
+chef_node_name            | Chef client node name. Optional, Default : `$HOSTNAME`
+wc_notify                 | Heat wait condition notification. Optional, Default : `{"status": "SUCCESS"`
 
 # chef_attributes Helpers
 There are a few key helpers provided by chef_bootstrap.sh to string replace variables

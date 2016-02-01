@@ -29,6 +29,14 @@ if [ -n "$chef_encrypted_secret_key" ]; then
   printf '%b\n' "$chef_encrypted_secret_key" >/etc/chef/encrypted_data_bag_secret
 fi
 
+if [ "$chef_node_name" ]; then
+  echo "chef_node_name parameter: $chef_node_name" >> $LOGFILE
+  node_name="$chef_node_name"
+else
+  echo "chef_node_name parameter: not passed" >> $LOGFILE
+  node_name="$HOSTNAME"
+fi
+
 # Cook a minimal client.rb for getting the chef-client registered
 echo "Creating a minimal /etc/chef/client.rb" >> $LOGFILE
 printf '%s\n' \
@@ -37,6 +45,7 @@ log_location     STDOUT
 chef_server_url  \"$chef_url\"
 validation_key         \"/etc/chef/validator.pem\"
 validation_client_name \"$chef_organization-validator\"
+node_name \"$node_name\"
 environment      \"$chef_environment\"" > /etc/chef/client.rb
 
 # Cook the first boot file
